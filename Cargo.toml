@@ -13,6 +13,7 @@ path = "src/protos/mod.rs"
 futures = "0.1.16"
 grpcio = "0.5.1"
 protobuf = "~2"
+clap = "~2.33"
 
 [build-dependencies]
 protoc-grpcio = "1.1.0"
