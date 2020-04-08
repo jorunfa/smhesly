@@ -1,23 +1,17 @@
-extern crate futures;
-extern crate grpcio;
-extern crate protobuf;
-
 pub mod messagecore;
 pub mod messagecore_grpc;
 
-use std::env;
 use std::sync::Arc;
+use std::str::FromStr;
 
 use grpcio::{ChannelBuilder, EnvBuilder, CallOption, MetadataBuilder, ChannelCredentialsBuilder};
 
 use messagecore_grpc::MessageCoreClient;
 use messagecore::{TextMessage, Address, Address_Type, Direction};
 
-pub fn send_sms(from: String, to: String, content: String) -> Result<messagecore::SendResult, grpcio::Error> {
-    let auth = env::var("BASE64_CLIENT_AND_SECRET").expect("Credentials missing");
-
+pub fn send_sms(auth: String, from: String, to: String, content: String, direction: Direction, from_type: Address_Type) -> Result<messagecore::SendResult, grpcio::Error> {
     let mut fa = Address::new();
-    fa.set_field_type(Address_Type::INTERNATIONAL_NUMBER);
+    fa.set_field_type(from_type);
     fa.set_number(from);
 
     let mut ta = Address::new();
@@ -29,7 +23,7 @@ pub fn send_sms(from: String, to: String, content: String) -> Result<messagecore
     tm.set_toAddress(ta);
     tm.set_body(content);
 
-    tm.set_direction(Direction::OUTGOING);
+    tm.set_direction(direction);
 
     // This is needed because otherwise it says it fails to load /usr/share/grpc/roots.pem, which doesn't exist (on my Mac at least)
     let cert: Vec<u8> = include_bytes!("../etc/roots.pem").to_vec();
@@ -50,3 +44,14 @@ pub fn send_sms(from: String, to: String, content: String) -> Result<messagecore
     client.send_text_message_opt(&tm, co)
 }
 
+impl FromStr for Direction {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Direction, ()> {
+        match s {
+            "OUTGOING" => Ok(Direction::OUTGOING),
+            "INCOMING" => Ok(Direction::INCOMING),
+            _ => Err(()),
+        }
+    }
+}
