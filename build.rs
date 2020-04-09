@@ -1,5 +1,3 @@
-extern crate protoc_grpcio;
-
 fn main() {
     let proto_root = "src/protos";
     println!("cargo:rerun-if-changed={}", proto_root);
