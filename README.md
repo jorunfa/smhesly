@@ -5,21 +5,34 @@ CLI written in Rust to send SMS using WGTWO APIs.
 ## Usage
 
 ```bash
-$ ./smhesly --help
+$ smhesly 4799900111 4799900112 Hello world 👋
+```
+
+```
 Smhesly 0.1.0
 Send SMS using WGTWO API
 
 USAGE:
-    smhesly <FROM> <TO> <MESSAGE>
+    smhesly [FLAGS] <FROM> <TO> <MESSAGE>...
 
 FLAGS:
+    -d, --dryrun     Don't send SMS, only prints input
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 ARGS:
-    <FROM>       Sender of SMS (e.g.: 4799900111 or MyTelco)
-    <TO>         Receiver of SMS (e.g.: 4799900111)
-    <MESSAGE>    SMS body content
+    <FROM>          Sender of SMS (e.g.: 4799900111 or MyTelco)
+    <TO>            Receiver of SMS (e.g.: 4799900111)
+    <MESSAGE>...    SMS body content
+
+```
+
+## Install
+```bash
+$ cargo run -- --help # alt 1
+$ cargo build && target/debug/smhesly --help # alt 2
+$ cargo build --release && target/release/smhesly --help # alt 3
+$ cargo install --path . && smhesly --help # alt 4
 ```
 
 ## Requirements
